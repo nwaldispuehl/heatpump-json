@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+}
+
+group 'ch.retorte'
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+tasks.processResources {
+    filesMatching("application.properties") {
+        filter { String line ->
+            line
+                .replace("CURRENT_VERSION", "$System.env.CURRENT_VERSION")
+                .replace("CURRENT_COMMIT", "$System.env.CURRENT_COMMIT")
+        }
+    }
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-resteasy-jaxb:${quarkusPlatformVersion}'
+    implementation 'io.quarkus:quarkus-resteasy-jsonb:${quarkusPlatformVersion}'
+    implementation 'io.quarkus:quarkus-websockets:${quarkusPlatformVersion}'
+    implementation 'io.quarkus:quarkus-arc:${quarkusPlatformVersion}'
+    implementation 'io.quarkus:quarkus-resteasy:${quarkusPlatformVersion}'
+    implementation 'io.quarkus:quarkus-quartz:${quarkusPlatformVersion}'
+    implementation 'io.quarkus:quarkus-jackson:${quarkusPlatformVersion}'
+    implementation 'io.quarkus:quarkus-builder:${quarkusPlatformVersion}'
+    implementation 'io.quarkus:quarkus-core-deployment:${quarkusPlatformVersion}'
+    implementation 'com.google.guava:guava:33.2.1-jre'
+    testImplementation 'io.quarkus:quarkus-junit5:${quarkusPlatformVersion}'
+    testImplementation 'io.rest-assured:rest-assured:5.4.0'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
